@@ -16,3 +16,4 @@ Route::get('/', function () {
 });
 
 Route::resource('clients', 'ClientController',  ['except' => ['create', 'edit',]]);
+Route::resource('projects', 'ProjectController',  ['except' => ['create', 'edit',]]);

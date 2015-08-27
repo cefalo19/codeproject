@@ -11,7 +11,7 @@
 |
 */
 
-$factory->define(CodeProject\User::class, function ($faker) {
+$factory->define(CodeProject\Entities\User::class, function ($faker) {
     return [
         'name' => $faker->name,
         'email' => $faker->email,
@@ -20,7 +20,7 @@ $factory->define(CodeProject\User::class, function ($faker) {
     ];
 });
 
-$factory->define(CodeProject\Client::class, function ($faker) {
+$factory->define(CodeProject\Entities\Client::class, function ($faker) {
     return [
         'name' => $faker->name,
         'responsible' => $faker->name,
@@ -28,5 +28,25 @@ $factory->define(CodeProject\Client::class, function ($faker) {
         'phone' => $faker->phoneNumber,
         'address' => $faker->address,
         'obs' => $faker->sentence,
+    ];
+});
+
+$factory->define(CodeProject\Entities\Project::class, function ($faker) {
+    return [
+        'owner_id' => rand(1, 10),
+        'client_id' => rand(1, 10),
+        'name' => $faker->word,
+        'description' => $faker->sentence,
+        'progress' => rand(1, 100),
+        'status' => rand(1,3),
+        'due_date' => $faker->dateTime('now'),
+    ];
+});
+
+$factory->define(CodeProject\Entities\ProjectNote::class, function ($faker) {
+    return [
+        'project_id' => rand(1, 10),
+        'title' => $faker->word,
+        'note' => $faker->paragraph,
     ];
 });
