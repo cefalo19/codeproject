@@ -32,8 +32,8 @@ class ClientService {
             return $this->repository->create($data);
         } catch(ValidatorException $e) {
             return [
-                'error'   =>true,
-                'message' =>$e->getMessageBag()
+                'error'   => true,
+                'message' => $e->getMessageBag()
             ];
         }
     }
@@ -44,10 +44,15 @@ class ClientService {
             $this->validator->with($data)->passesOrFail();
 
             return $this->repository->update($data, $id);
-        } catch(ValidatorException $e) {
+        }  catch(ValidatorException $e) {
             return [
-                'error'   =>true,
-                'message' =>$e->getMessageBag()
+                'error'   => true,
+                'message' => $e->getMessageBag()
+            ];
+        } catch(\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return [
+                'error'   => true,
+                'message' => 'Cliente não encontrado!'
             ];
         }
     }

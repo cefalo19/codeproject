@@ -54,7 +54,7 @@ class ClientController extends Controller
      */
     public function store(Request $request)
     {
-        return $this->repository->service($request->all());
+        return $this->service->create($request->all());
     }
 
     /**
@@ -65,7 +65,14 @@ class ClientController extends Controller
      */
     public function show($id)
     {
-        return $this->repository->find($id);
+        try {
+            return $this->repository->find($id);
+        }  catch(\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return [
+                'error'   => true,
+                'message' => 'Cliente não encontrado!'
+            ];
+        }
     }
 
     /**
@@ -99,6 +106,17 @@ class ClientController extends Controller
      */
     public function destroy($id)
     {
-        $this->repository->delete($id);
+        try {
+            $this->repository->delete($id);
+
+            return [
+                'message' => "Cliente #$id deletado!"
+            ];
+        }  catch(\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return [
+                'error'   => true,
+                'message' => 'Cliente não encontrado!'
+            ];
+        }
     }
 }
