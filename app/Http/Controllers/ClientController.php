@@ -106,17 +106,6 @@ class ClientController extends Controller
      */
     public function destroy($id)
     {
-        try {
-            $this->repository->delete($id);
-
-            return [
-                'message' => "Cliente #$id deletado!"
-            ];
-        }  catch(\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return [
-                'error'   => true,
-                'message' => 'Cliente não encontrado!'
-            ];
-        }
+        return $this->service->delete($id);
     }
 }

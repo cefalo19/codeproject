@@ -49,15 +49,25 @@ class ProjectService {
             return $this->repository->update($data, $id);
         }  catch(ValidatorException $e) {
             return [
-                'error'   =>true,
-                'message' =>$e->getMessageBag()
+                'error'   => true,
+                'message' => $e->getMessageBag()
             ];
-        } catch(\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+        }
+    }
+
+    public function delete($id)
+    {
+        try {
+            $this->repository->delete($id);
+
+            return [
+                'message' => "Projeto #$id deletado!"
+            ];
+        }  catch(\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return [
                 'error'   => true,
                 'message' => 'Projeto não encontrado!'
             ];
         }
     }
-
 } 

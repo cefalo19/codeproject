@@ -2,25 +2,25 @@
 
 namespace CodeProject\Http\Controllers;
 
-use CodeProject\Repositories\ProjectRepository;
-use CodeProject\Services\ProjectService;
+use CodeProject\Repositories\ProjectTaskRepository;
+use CodeProject\Services\ProjectTaskService;
 use Illuminate\Http\Request;
 
 use CodeProject\Http\Requests;
 use CodeProject\Http\Controllers\Controller;
 
-class ProjectController extends Controller
+class ProjectTaskController extends Controller
 {
     /**
-     * @var ProjectRepository
+     * @var ProjectTaskRepository
      */
     private $repository;
     /**
-     * @var ProjectService
+     * @var ProjectTaskService
      */
     private $service;
 
-    public function __construct(ProjectRepository $repository, ProjectService $service) {
+    public function __construct(ProjectTaskRepository $repository, ProjectTaskService $service) {
 
         $this->repository = $repository;
         $this->service = $service;
@@ -31,9 +31,9 @@ class ProjectController extends Controller
      *
      * @return Response
      */
-    public function index()
+    public function index($id)
     {
-        return $this->repository->with(['owner', 'client'])->all();
+        return $this->repository->findWhere(['project_id' => $id]);
     }
 
     /**
@@ -54,7 +54,7 @@ class ProjectController extends Controller
      */
     public function store(Request $request)
     {
-        return $this->service->create($request->all());
+        return $this->repository->service($request->all());
     }
 
     /**
@@ -63,16 +63,9 @@ class ProjectController extends Controller
      * @param  int  $id
      * @return Response
      */
-    public function show($id)
+    public function show($id, $taskId)
     {
-        try {
-            return $this->repository->with(['owner', 'client'])->find($id);
-        }  catch(\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return [
-                'error'   => true,
-                'message' => 'Projeto não encontrado!'
-            ];
-        }
+        return $this->repository->findWhere(['project_id' => $id, 'id' => $taskId]);
     }
 
     /**
@@ -93,9 +86,9 @@ class ProjectController extends Controller
      * @param  int  $id
      * @return Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $id, $taskId)
     {
-        return $this->service->update($request->all(), $id);
+        return $this->service->update($request->all(), $taskId);
     }
 
     /**
@@ -104,8 +97,8 @@ class ProjectController extends Controller
      * @param  int  $id
      * @return Response
      */
-    public function destroy($id)
+    public function destroy($id, $taskId)
     {
-        return $this->service->delete($id);
+        return $this->service->delete($id, $taskId);
     }
 }

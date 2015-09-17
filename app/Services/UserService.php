@@ -1,24 +1,27 @@
 <?php
 
-namespace CodeProject\Services;
+namespace CodeUser\Services;
 
-
-use CodeProject\Repositories\ClientRepository;
-use CodeProject\Validators\ClientValidator;
+use CodeUser\Repositories\UserRepository;
+use CodeUser\Validators\UserValidator;
 use Prettus\Validator\Exceptions\ValidatorException;
 
-class ClientService {
+class UserService {
 
     /**
-     * @var ClientRepository
+     * @var UserRepository
      */
     private $repository;
     /**
-     * @var ClientValidator
+     * @var UserValidator
      */
     private $validator;
 
-    public function __construct(ClientRepository $repository, ClientValidator $validator)
+    /**
+     * @param UserRepository $repository
+     * @param UserValidator $validator
+     */
+    public function __construct(UserRepository $repository, UserValidator $validator)
     {
         $this->repository = $repository;
         $this->validator = $validator;
@@ -32,8 +35,8 @@ class ClientService {
             return $this->repository->create($data);
         } catch(ValidatorException $e) {
             return [
-                'error'   => true,
-                'message' => $e->getMessageBag()
+                'error'   =>true,
+                'message' =>$e->getMessageBag()
             ];
         }
     }
@@ -52,20 +55,6 @@ class ClientService {
         }
     }
 
-    public function delete($id)
-    {
-        try {
-            $this->repository->delete($id);
 
-            return [
-                'message' => "Cliente #$id deletado!"
-            ];
-        }  catch(\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return [
-                'error'   => true,
-                'message' => 'Cliente não encontrado!'
-            ];
-        }
-    }
 
 } 

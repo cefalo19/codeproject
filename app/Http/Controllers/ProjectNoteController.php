@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use CodeProject\Http\Requests;
 use CodeProject\Http\Controllers\Controller;
 
-class ProjectController extends Controller
+class ProjectNoteController extends Controller
 {
     /**
      * @var ProjectNoteRepository
@@ -54,7 +54,7 @@ class ProjectController extends Controller
      */
     public function store(Request $request)
     {
-        return $this->repository->service($request->all());
+        return $this->service->create($request->all());
     }
 
     /**
@@ -65,7 +65,7 @@ class ProjectController extends Controller
      */
     public function show($id, $noteId)
     {
-        return $this->repository->findWhere(['project_id' => $id, 'id' => $id]);
+        return $this->repository->findWhere(['project_id' => $id, 'id' => $noteId]);
     }
 
     /**
@@ -99,6 +99,6 @@ class ProjectController extends Controller
      */
     public function destroy($id, $noteId)
     {
-        $this->repository->delete($noteId);
+        return $this->service->delete($id, $noteId);
     }
 }

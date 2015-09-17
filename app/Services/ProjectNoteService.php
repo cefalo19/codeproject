@@ -47,10 +47,26 @@ class ProjectNoteService {
             $this->validator->with($data)->passesOrFail();
 
             return $this->repository->update($data, $id);
-        } catch(ValidatorException $e) {
+        }  catch(ValidatorException $e) {
             return [
-                'error'   =>true,
-                'message' =>$e->getMessageBag()
+                'error'   => true,
+                'message' => $e->getMessageBag()
+            ];
+        }
+    }
+
+    public function delete($id, $noteId)
+    {
+        try {
+            $this->repository->delete($noteId);
+
+            return [
+                'message' => "Nota #$noteId deletado!"
+            ];
+        }  catch(\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return [
+                'error'   => true,
+                'message' => 'Nota não encontrada!'
             ];
         }
     }

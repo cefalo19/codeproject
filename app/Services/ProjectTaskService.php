@@ -2,23 +2,26 @@
 
 namespace CodeProject\Services;
 
-
-use CodeProject\Repositories\ClientRepository;
-use CodeProject\Validators\ClientValidator;
+use CodeProject\Repositories\ProjectNoteRepository;
+use CodeProject\Validators\ProjectNoteValidator;
 use Prettus\Validator\Exceptions\ValidatorException;
 
-class ClientService {
+class ProjectTaskService {
 
     /**
-     * @var ClientRepository
+     * @var ProjectNoteRepository
      */
     private $repository;
     /**
-     * @var ClientValidator
+     * @var ProjectNoteValidator
      */
     private $validator;
 
-    public function __construct(ClientRepository $repository, ClientValidator $validator)
+    /**
+     * @param ProjectNoteRepository $repository
+     * @param ProjectNoteValidator $validator
+     */
+    public function __construct(ProjectNoteRepository $repository, ProjectNoteValidator $validator)
     {
         $this->repository = $repository;
         $this->validator = $validator;
@@ -32,8 +35,8 @@ class ClientService {
             return $this->repository->create($data);
         } catch(ValidatorException $e) {
             return [
-                'error'   => true,
-                'message' => $e->getMessageBag()
+                'error'   =>true,
+                'message' =>$e->getMessageBag()
             ];
         }
     }
@@ -52,18 +55,18 @@ class ClientService {
         }
     }
 
-    public function delete($id)
+    public function delete($id, $taskId)
     {
         try {
-            $this->repository->delete($id);
+            $this->repository->delete($taskId);
 
             return [
-                'message' => "Cliente #$id deletado!"
+                'message' => "Tarefa #$taskId deletada!"
             ];
         }  catch(\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return [
                 'error'   => true,
-                'message' => 'Cliente não encontrado!'
+                'message' => 'Tarefa não encontrada!'
             ];
         }
     }
