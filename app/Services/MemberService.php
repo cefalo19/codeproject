@@ -69,7 +69,7 @@ class MemberService {
     {
         try {
             $result = [];
-            
+
             $member = $this->repository->find($id)->members()->find($memberId);
 
             if (is_null($member)) {

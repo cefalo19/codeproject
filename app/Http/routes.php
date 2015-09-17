@@ -15,6 +15,10 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::post('oauth/access_token', function() {
+    return Response::json(Authorizer::issueAccessToken());
+});
+
 Route::resource('clients', 'ClientController',  ['except' => ['create', 'edit']]);
 Route::resource('projects', 'ProjectController',  ['except' => ['create', 'edit']]);
 
