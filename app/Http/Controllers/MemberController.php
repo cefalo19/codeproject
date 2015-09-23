@@ -29,7 +29,7 @@ class MemberController extends Controller
     public function all($id)
     {
         try {
-            return $this->repository->find($id)->members;
+            return $this->repository->skipPresenter()->find($id)->members;
         }  catch(\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return [
                 'error'   => true,

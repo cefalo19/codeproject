@@ -2,14 +2,14 @@
 
 namespace CodeProject\Http\Controllers;
 
-use CodeProject\Repositories\ProjectRepository;
-use CodeProject\Services\ProjectService;
+use CodeProject\Repositories\ProjectFileRepository;
+use CodeProject\Services\ProjectFileService;
 use Illuminate\Http\Request;
 
 use CodeProject\Http\Requests;
 use CodeProject\Http\Controllers\Controller;
 
-class ProjectController extends Controller
+class ProjectFileController extends Controller
 {
     /**
      * @var ProjectRepository
@@ -20,7 +20,7 @@ class ProjectController extends Controller
      */
     private $service;
 
-    public function __construct(ProjectRepository $repository, ProjectService $service) {
+    public function __construct(ProjectFileRepository $repository, ProjectFileService $service) {
 
         $this->repository = $repository;
         $this->service = $service;
@@ -54,7 +54,16 @@ class ProjectController extends Controller
      */
     public function store(Request $request)
     {
-        return $this->service->create($request->all());
+        $file = $request->file('file');
+        $extension = $file->getClientOriginalExtension();
+
+        $data['file'] = $file;
+        $data['extension'] = $extension;
+        $data['name'] = $request->name;
+        $data['project_id'] = $request->project_id;
+        $data['description'] = $request->description;
+
+        $this->service->create($data);
     }
 
     /**

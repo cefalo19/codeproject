@@ -30,4 +30,9 @@ class ProjectTaskRepositoryEloquent extends BaseRepository implements ProjectTas
     {
         $this->pushCriteria( app(RequestCriteria::class) );
     }
+
+    public function presenter()
+    {
+        return \CodeProject\Presenters\ProjectTaskPresenter::class;
+    }
 }

@@ -32,7 +32,7 @@ class MemberService {
         try {
             $this->validator->with($data)->passesOrFail();
 
-            $this->repository->find($data['project_id'])->members()->attach($data['user_id']);
+            $this->repository->skipPresenter()->find($data['project_id'])->members()->attach($data['user_id']);
 
             return [
                 'error'   => false,
@@ -51,7 +51,7 @@ class MemberService {
         try {
             $this->validator->with($data)->passesOrFail();
 
-            $this->repository->find($data['project_id'])->members()->detach($data['user_id']);
+            $this->repository->skipPresenter()->find($data['project_id'])->members()->detach($data['user_id']);
 
             return [
                 'error'   => false,
@@ -70,7 +70,7 @@ class MemberService {
         try {
             $result = [];
 
-            $member = $this->repository->find($id)->members()->find($memberId);
+            $member = $this->repository->skipPresenter()->find($id)->members()->find($memberId);
 
             if (is_null($member)) {
                 $result = [
