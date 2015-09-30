@@ -3,7 +3,7 @@
 namespace CodeProject\Services;
 
 use CodeProject\Repositories\ProjectRepository;
-use CodeProject\Validators\ProjectValidator;
+use CodeProject\Validators\ProjectFileValidator;
 use Illuminate\Contracts\Filesystem\Factory as Storage;
 use Illuminate\Filesystem\Filesystem;
 use Prettus\Validator\Exceptions\ValidatorException;
@@ -29,11 +29,11 @@ class ProjectFileService {
 
     /**
      * @param ProjectRepository $repository
-     * @param ProjectValidator $validator
+     * @param ProjectFileValidator $validator
      * @param Filesystem $filesystem
      * @param Storage $storage
      */
-    public function __construct(ProjectRepository $repository, ProjectValidator $validator, Filesystem $filesystem, Storage $storage)
+    public function __construct(ProjectRepository $repository, ProjectFileValidator $validator, Filesystem $filesystem, Storage $storage)
     {
         $this->repository = $repository;
         $this->validator = $validator;
@@ -44,6 +44,25 @@ class ProjectFileService {
     public function create(array $data)
     {
         try {
+            $this->validator->with($data)->passesOrFail();
+
+            $data['extension'] = $data['file']->getClientOriginalExtension();
+
+            $project = $this->repository->skipPresenter()->find($data['project_id']);
+            $projectFile = $project->files()->create($data);
+
+            $this->storage->put($projectFile->id . '.' . $data['extension'], $this->filesystem->get($data['file']));
+
+            return $projectFile;
+        } catch(ValidatorException $e) {
+            return [
+                'error'   =>true,
+                'message' =>$e->getMessageBag()
+            ];
+        }
+
+
+        /*try {
             $project = $this->repository->skipPresenter()->find($data['project_id']);
             $projectFile = $project->files()->create($data);
 
@@ -53,30 +72,27 @@ class ProjectFileService {
                 'error'   => true,
                 'message' => $e->getMessageBag()
             ];
-        }
+        }*/
     }
 
-    public function update(array $data, $id)
+    public function delete($id, $fileId)
     {
         try {
-            $this->validator->with($data)->passesOrFail();
+            $project = $this->repository->skipPresenter()->find($id);
+            $projectFile = $project->files()->find($fileId);
 
-            return $this->repository->update($data, $id);
-        }  catch(ValidatorException $e) {
-            return [
-                'error'   => true,
-                'message' => $e->getMessageBag()
-            ];
-        }
-    }
+            if(is_null($projectFile)) {
+                return [
+                    'message' => "Arquivo não encontrado!"
+                ];
+            }
 
-    public function delete($id)
-    {
-        try {
-            $this->repository->delete($id);
+            $this->storage->delete($projectFile->id . '.' . $projectFile->extension);
+
+            $projectFile->delete();
 
             return [
-                'message' => "Projeto #$id deletado!"
+                'message' => "Arquivo #$fileId deletado!"
             ];
         }  catch(\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return [

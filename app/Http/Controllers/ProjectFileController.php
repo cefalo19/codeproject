@@ -54,16 +54,7 @@ class ProjectFileController extends Controller
      */
     public function store(Request $request)
     {
-        $file = $request->file('file');
-        $extension = $file->getClientOriginalExtension();
-
-        $data['file'] = $file;
-        $data['extension'] = $extension;
-        $data['name'] = $request->name;
-        $data['project_id'] = $request->project_id;
-        $data['description'] = $request->description;
-
-        $this->service->create($data);
+        return $this->service->create($request->all());
     }
 
     /**
@@ -74,18 +65,7 @@ class ProjectFileController extends Controller
      */
     public function show($id)
     {
-        try {
-            if ($this->checkProjectPermissions($id) == false) {
-                return ['error' => 'Access Forbidden'];
-            }
-
-            return $this->repository->with(['owner', 'client'])->find($id);
-        }  catch(\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return [
-                'error'   => true,
-                'message' => 'Projeto não encontrado!'
-            ];
-        }
+        //
     }
 
     /**
@@ -108,11 +88,7 @@ class ProjectFileController extends Controller
      */
     public function update(Request $request, $id)
     {
-        if ($this->checkProjectPermissions($id) == false) {
-            return ['error' => 'Access Forbidden'];
-        }
-
-        return $this->service->update($request->all(), $id);
+        //
     }
 
     /**
@@ -121,34 +97,9 @@ class ProjectFileController extends Controller
      * @param  int  $id
      * @return Response
      */
-    public function destroy($id)
+    public function destroy($id, $fileId)
     {
-        if ($this->checkProjectPermissions($id) == false) {
-            return ['error' => 'Access Forbidden'];
-        }
-
-        return $this->service->delete($id);
+        return $this->service->delete($id, $fileId);
     }
 
-    private function checkProjectOwner($projectId)
-    {
-        $userId = \Authorizer::getResourceOwnerId();
-
-        return $this->repository->isOwner($projectId, $userId);
-    }
-
-    private function checkProjectMember($projectId)
-    {
-        $userId = \Authorizer::getResourceOwnerId();
-
-        return $this->repository->hasMember($projectId, $userId);
-    }
-
-    private function checkProjectPermissions($projectId)
-    {
-        if ($this->checkProjectOwner($projectId) or $this->checkProjectMember($projectId))
-            return true;
-
-        return false;
-    }
 }
